@@ -1,0 +1,55 @@
+# ESP-IDF Build Output
+build/
+sdk/
+dependencies/
+esp-idf/
+
+# Compiled binaries
+*.bin
+*.elf
+*.map
+*.dylib
+*.a
+*.o
+*.obj
+
+# VS Code ESP-IDF
+.vscode/
+buid/
+
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+*.sublime-*
+
+# Clangd/LSP
+.clangd/
+.cache/
+*.idx
+*.pdb
+compile_commands.json
+
+# Python (ESP-IDF tools)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest/
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# WiFi Credentials
+main/config/UserData.h
