@@ -11,6 +11,7 @@
 #include "EspException.hpp"
 #include "IRException.hpp"
 #include "Exception.hpp"
+#include "Log.hpp"
 
 extern "C" void app_main(void) {
     std::unique_ptr<WifiSTA>  wifi = SystemInitializer::create_wifi(SSID, PASSWORD);
@@ -24,7 +25,7 @@ extern "C" void app_main(void) {
             continue;
         }
 
-        printf("System ready! Starting alarm controller...\n");
+        LOGI("Main", "System ready! Starting alarm controller...");
 
         LedManager led_manager{IR_TRANSFER_PIN};
         AlertsManager alerts_manager{std::string(CITY)};
@@ -33,13 +34,13 @@ extern "C" void app_main(void) {
         try {
             controller.start();
         } catch (EspException& ex) {
-            printf("[Main] ESP error %d: %s\n", ex.get(), esp_err_to_name(ex.get()));
+            LOGE("Main", "ESP error %d: %s", ex.get(), esp_err_to_name(ex.get()));
         } catch (IRException& ex) {
-            printf("[Main] IR error code: %d\n", static_cast<uint16_t>(ex.get()));
+            LOGE("Main", "IR error code: %d", static_cast<uint16_t>(ex.get()));
         } catch (Exception& ex) {
-            printf("[Main] General error code: %d\n", static_cast<uint16_t>(ex.get()));
+            LOGE("Main", "General error code: %d", static_cast<uint16_t>(ex.get()));
         } catch (...) {
-            printf("[Main] Unknown error\n");
+            LOGE_CATCH("Main", "Unknown error");
         }
     }
 }

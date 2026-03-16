@@ -1,6 +1,7 @@
 #include "WifiCore.hpp"
 #include "Exception.hpp"
 #include "EspException.hpp"
+#include "Log.hpp"
 
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>
@@ -93,7 +94,7 @@ void WifiCore::init()
     }
 
     _initialized = true;
-    printf("[Wifi] Core initialized\n");
+    LOGI("Wifi", "Core initialized");
 }
 
 void WifiCore::deinit()
@@ -129,7 +130,7 @@ void WifiCore::deinit()
     _initialized = false;
     _sta_connected = false;
     _is_connecting = false;
-    printf("[Wifi] Core deinitialized\n");
+    LOGI("Wifi", "Core deinitialized");
 }
 
 void WifiCore::add_wifi_mode(const wifi_mode_t mode)
@@ -143,7 +144,7 @@ void WifiCore::add_wifi_mode(const wifi_mode_t mode)
     esp_err_t ret = esp_wifi_get_mode(&current_mode);
     if (ret != ESP_OK)
     {
-        printf("[Wifi] Failed to get mode: %d\n", ret);
+        LOGE("Wifi", "Failed to get mode: %d", ret);
         throw Exception(ErrorCode::FAILED_TO_GET_WIFI_MODE);
     }
 
@@ -156,7 +157,7 @@ void WifiCore::add_wifi_mode(const wifi_mode_t mode)
     ret = esp_wifi_set_mode(new_mode);
     if (ret != ESP_OK)
     {
-        printf("[Wifi] Failed to set mode: %d\n", ret);
+        LOGE("Wifi", "Failed to set mode: %d", ret);
         throw Exception(ErrorCode::FAILED_TO_SET_WIFI_MODE);
     }
 }
@@ -201,7 +202,7 @@ void WifiCore::remove_wifi_mode(const wifi_mode_t mode)
     esp_err_t ret = esp_wifi_get_mode(&current_mode);
     if (ret != ESP_OK)
     {
-        printf("[Wifi] Failed to get mode: %d\n", ret);
+        LOGE("Wifi", "Failed to get mode: %d", ret);
         throw Exception(ErrorCode::FAILED_TO_GET_WIFI_MODE);
     }
 
@@ -214,7 +215,7 @@ void WifiCore::remove_wifi_mode(const wifi_mode_t mode)
     ret = esp_wifi_set_mode(new_mode);
     if (ret != ESP_OK)
     {
-        printf("[Wifi] Failed to set mode: %d\n", ret);
+        LOGE("Wifi", "Failed to set mode: %d", ret);
         throw Exception(ErrorCode::FAILED_TO_SET_WIFI_MODE);
     }
 }
@@ -302,7 +303,7 @@ bool WifiCore::wait_for_connection(uint32_t timeout_ms)
             int64_t elapsed = (esp_timer_get_time() / 1000) - start_time;
             if (elapsed >= static_cast<int64_t>(timeout_ms))
             {
-                printf("[Wifi] Connection timeout\n");
+                LOGI("Wifi", "Connection timeout");
                 return false;
             }
         }
@@ -361,14 +362,14 @@ void WifiCore::wifi_event_handler(void* arg, esp_event_base_t event_base, int32_
         switch (event_id)
         {
             case WIFI_EVENT_STA_START:
-                printf("[Wifi] Event: WIFI_EVENT_STA_START\n");
+                LOGI("Wifi", "Event: WIFI_EVENT_STA_START");
                 break;
             case WIFI_EVENT_STA_CONNECTED:
-                printf("[Wifi] Event: WIFI_EVENT_STA_CONNECTED\n");
+                LOGI("Wifi", "Event: WIFI_EVENT_STA_CONNECTED");
                 core->set_sta_connected(true);
                 break;
             case WIFI_EVENT_STA_DISCONNECTED:
-                printf("[Wifi] Event: WIFI_EVENT_STA_DISCONNECTED\n");
+                LOGI("Wifi", "Event: WIFI_EVENT_STA_DISCONNECTED");
                 core->set_sta_connected(false);
                 core->set_has_ip(false);
                 core->notify_failed();
@@ -391,12 +392,12 @@ void WifiCore::ip_event_handler(void* arg, esp_event_base_t event_base, int32_t 
         switch (event_id)
         {
             case IP_EVENT_STA_GOT_IP:
-                printf("[Wifi] Event: IP_EVENT_STA_GOT_IP\n");
+                LOGI("Wifi", "Event: IP_EVENT_STA_GOT_IP");
                 core->set_has_ip(true);
                 core->notify_connected();
                 break;
             case IP_EVENT_STA_LOST_IP:
-                printf("[Wifi] Event: IP_EVENT_STA_LOST_IP\n");
+                LOGI("Wifi", "Event: IP_EVENT_STA_LOST_IP");
                 core->set_has_ip(false);
                 break;
         }

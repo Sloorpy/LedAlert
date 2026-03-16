@@ -2,9 +2,9 @@
 
 #include "WifiCore.hpp"
 #include "EspException.hpp"
+#include "Log.hpp"
 
 #include <cstring>
-#include <stdio.h>
 
 WifiAP::WifiAP()
     : _core(WifiCore::get_instance())
@@ -21,7 +21,7 @@ void WifiAP::start(std::string_view ssid)
 {
     if (_started)
     {
-        printf("[Wifi] AP already started\n");
+        LOGI("Wifi", "AP already started");
         return;
     }
 
@@ -57,7 +57,7 @@ void WifiAP::start(std::string_view ssid)
     }
 
     _started = true;
-    printf("[Wifi] AP started: %.*s\n", ssid.length(), ssid.data());
+    LOGI("Wifi", "AP started: %.*s", ssid.length(), ssid.data());
 }
 
 void WifiAP::stop()
@@ -69,5 +69,5 @@ void WifiAP::stop()
 
     esp_wifi_stop();
     _started = false;
-    printf("[Wifi] AP stopped\n");
+    LOGI("Wifi", "AP stopped");
 }

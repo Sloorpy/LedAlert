@@ -1,4 +1,5 @@
 #include "SystemInitializer.hpp"
+#include "Log.hpp"
 
 #include <cinttypes>
 #include <unistd.h>
@@ -14,7 +15,7 @@ std::unique_ptr<SNTPClient> SystemInitializer::create_sntp() {
 bool SystemInitializer::connect_wifi(WifiSTA& wifi) {
     try 
     {
-        printf("[WiFi] Connecting...\n");
+        LOGI("WiFi", "Connecting...");
         wifi.connect();
 
         return wifi.is_connected();
@@ -28,7 +29,7 @@ bool SystemInitializer::connect_wifi(WifiSTA& wifi) {
 bool SystemInitializer::sync_time(SNTPClient& sntp, WifiSTA& wifi) {
     try 
     {
-        printf("[Time] Syncing time...\n");
+        LOGI("Time", "Syncing time...");
         return sntp.sync_time(wifi);
     }
     catch(...)

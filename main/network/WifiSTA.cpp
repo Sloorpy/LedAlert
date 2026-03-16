@@ -1,9 +1,9 @@
 #include "WifiSTA.hpp"
 #include "WifiCore.hpp"
 #include "Exception.hpp"
+#include "Log.hpp"
 
 #include <cstring>
-#include <stdio.h>
 
 uint8_t WifiSTA::s_channel = DEFAULT_CHANNEL;
 
@@ -48,7 +48,7 @@ wifi_config_t WifiSTA::create_wifi_config() const
     if (s_channel != DEFAULT_CHANNEL)
     {
         sta_conf.channel = s_channel;
-        printf("[Wifi] Using stored channel %d\n", s_channel);
+        LOGI("Wifi", "Using stored channel %d", s_channel);
     }
 
    return wifi_config_t{.sta = sta_conf};
@@ -68,7 +68,7 @@ void WifiSTA::connect(uint32_t timeout_ms)
 {
     if (_core->has_ip() && _core->is_sta_connected())
     {
-        printf("[Wifi] Already connected\n");
+        LOGI("Wifi", "Already connected");
         return;
     }
 
@@ -80,14 +80,14 @@ void WifiSTA::connect(uint32_t timeout_ms)
     esp_err_t ret = esp_wifi_set_config(WIFI_IF_STA, &wifi_conf);
     if (ret != ESP_OK)
     {
-        printf("[Wifi] Failed to set config: %d\n", ret);
+        LOGE("Wifi", "Failed to set config: %d", ret);
         throw Exception(ErrorCode::FAILED_TO_SET_WIFI_CONFIG);
     }
 
     ret = esp_wifi_start();
     if (ret != ESP_OK && ret != ESP_ERR_WIFI_STATE)
     {
-        printf("[Wifi] Failed to start WiFi: %d\n", ret);
+        LOGE("Wifi", "Failed to start WiFi: %d", ret);
         throw Exception(ErrorCode::FAILED_TO_START_WIFI);
     }
 
@@ -97,7 +97,7 @@ void WifiSTA::connect(uint32_t timeout_ms)
     ret = esp_wifi_connect();
     if (ret != ESP_OK)
     {
-        printf("[Wifi] Failed to connect: %d\n", ret);
+        LOGE("Wifi", "Failed to connect: %d", ret);
         _core->set_connecting(false);
         throw Exception(ErrorCode::FAILED_TO_CALL_WIFI_CONNECT);
     }
@@ -107,12 +107,12 @@ void WifiSTA::connect(uint32_t timeout_ms)
 
     if (connected)
     {
-        printf("[Wifi] Connected!\n");
+        LOGI("Wifi", "Connected!");
         store_connection_info();
         return;
     }
 
-    printf("[Wifi] Connection failed\n");
+    LOGI("Wifi", "Connection failed");
 }
 
 bool WifiSTA::is_connected() const
@@ -127,6 +127,6 @@ void WifiSTA::disconnect()
         esp_wifi_disconnect();
         _core->set_sta_connected(false);
         _core->set_has_ip(false);
-        printf("[Wifi] Disconnected\n");
+        LOGI("Wifi", "Disconnected");
     }
 }
