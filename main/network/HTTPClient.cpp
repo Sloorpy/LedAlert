@@ -44,6 +44,7 @@ std::string HTTPClient::get(std::string_view url)
 
     esp_http_client_config_t config = {
         .url = url.data(),
+        .method = HTTP_METHOD_GET,
         .event_handler = _event_handler,
         .user_data = this,
         .skip_cert_common_name_check = true,
