@@ -3,6 +3,8 @@ build/
 sdk/
 dependencies/
 esp-idf/
+sdkconfig
+sdkconfig.old
 
 # Compiled binaries
 *.bin
@@ -26,6 +28,7 @@ buid/
 *.sublime-*
 
 # Clangd/LSP
+.clangd
 .clangd/
 .cache/
 *.idx
