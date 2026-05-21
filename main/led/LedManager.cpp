@@ -18,9 +18,8 @@ void LedManager::play(AlarmType type) {
     }
 
     const auto& sequence = it->second.get_sequence();
-    for (const auto& action : sequence) {
-        _transmitter->send_multiple(static_cast<LEDProtocol>(action.cmd.command));
-        usleep(action.duration_ms * 1000);
+    for (const LedAction& action : sequence) {
+        _transmitter->send_multiple(action.cmd, action.amount, action.duration_ms);
     }
 }
 
@@ -44,21 +43,29 @@ void LedManager::build_default_sequences() {
 
 LedSequence LedManager::create_air_raid_sequence() const {
     std::vector<LedAction> actions;
+    std::vector<LedAction> start_actions;
 
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::POWER_ON)}, .duration_ms = 10});
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::BRIGHT_UP)}, .duration_ms = 10});
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::RED_LIGHT)}, .duration_ms = 200});
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::WHITE_LIGHT)}, .duration_ms = 200});
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::GREEN_LIGHT)}, .duration_ms = 200});
+    start_actions.push_back({.cmd = LEDProtocol::POWER_ON, .duration_ms = 10, .amount = 20});
+    start_actions.push_back({.cmd = LEDProtocol::BRIGHT_UP, .duration_ms = 10, .amount = 10});
 
-    return LedSequence(actions);
+
+    actions.push_back({.cmd = LEDProtocol::RED_LIGHT, .duration_ms = 150});
+    actions.push_back({.cmd = LEDProtocol::WHITE_LIGHT, .duration_ms = 150});
+    actions.push_back({.cmd = LEDProtocol::GREEN_LIGHT, .duration_ms = 150});
+
+    return LedSequence(actions, start_actions);
 }
 
 LedSequence LedManager::create_warning_sequence() const {
     std::vector<LedAction> actions;
+    std::vector<LedAction> start_actions;
 
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::POWER_ON)}, .duration_ms = 400});
-    actions.push_back({.cmd = {.state = SignalState::NORMAL, .address = 0, .command = static_cast<uint8_t>(LEDProtocol::POWER_OFF)}, .duration_ms = 400});
+    start_actions.push_back({.cmd = LEDProtocol::POWER_ON, .duration_ms = 10});
+    start_actions.push_back({.cmd = LEDProtocol::WHITE_LIGHT, .duration_ms = 10});
+    start_actions.push_back({.cmd = LEDProtocol::BRIGHT_UP, .duration_ms = 10, .amount = 10});
 
-    return LedSequence(actions);
+    actions.push_back({.cmd = LEDProtocol::POWER_ON, .duration_ms = 1000});
+    actions.push_back({.cmd = LEDProtocol::POWER_OFF, .duration_ms = 500});
+
+    return LedSequence(actions, start_actions);
 }
