@@ -1,7 +1,7 @@
 #include "SNTPClient.hpp"
+#include "Log.hpp"
 
 #include <ctime>
-#include <cstdio>
 
 #include <esp_netif_sntp.h>
 #include <freertos/FreeRTOS.h>
@@ -44,7 +44,7 @@ bool SNTPClient::sync_time(const WifiSTA& wifi)
 
     if (_synced)
     {
-        printf("[Time] Already synced previously\n");
+        LOGI("Time", "Already synced previously");
         return true;
     }
 
@@ -60,11 +60,11 @@ bool SNTPClient::sync_time_impl(const WifiSTA& wifi)
     {
         if (!wifi.is_connected())
         {
-            printf("[Time] WiFi disconnected, aborting sync\n");
+            LOGI("Time", "WiFi disconnected, aborting sync");
             return false;
         }
 
-        printf("[Time] Sync attempt %u/%u\n", attempt + 1, MAX_RETRIES);
+        LOGI("Time", "Sync attempt %u/%u", attempt + 1, MAX_RETRIES);
 
         if (try_sync())
         {
@@ -78,7 +78,7 @@ bool SNTPClient::sync_time_impl(const WifiSTA& wifi)
         }
     }
 
-    printf("[Time] Sync failed after %u attempts\n", MAX_RETRIES);
+    LOGI("Time", "Sync failed after %u attempts", MAX_RETRIES);
     return false;
 }
 
@@ -98,7 +98,7 @@ bool SNTPClient::try_sync()
     if (esp_netif_sntp_sync_wait(pdMS_TO_TICKS(SYNC_TIMEOUT_MS)) == ESP_OK)
     {
         time_t now = time(nullptr);
-        printf("[Time] Time synced successfully: %s", ctime(&now));
+        LOGI("Time", "Time synced successfully: %s", ctime(&now));
         return true;
     }
 

@@ -1,4 +1,5 @@
 #include "Utils.hpp"
+#include "Log.hpp"
 
 #include <esp_netif_sntp.h>
 #include <esp_system.h>
@@ -27,12 +28,12 @@ namespace Utils
                 time_t now = time(nullptr);
                 if (now > 1700000000)
                 {
-                    printf("[Time] Time synced successfully: %s", ctime(&now));
+                    LOGI("Time", "Time synced successfully: %s", ctime(&now));
                     return true;
                 }
             }
 
-            printf("[Time] Time sync failed, retrying...\n");
+            LOGI("Time", "Time sync failed, retrying...");
             esp_netif_sntp_deinit();
             vTaskDelay(pdMS_TO_TICKS(2000));
         }

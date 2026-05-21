@@ -1,4 +1,5 @@
 #include "AlarmController.hpp"
+#include "Log.hpp"
 
 #include <ctime>
 #include <cstring>
@@ -21,12 +22,12 @@ void AlarmController::check_and_play() {
     //alert_type = AlarmType::AirRaid;
     switch (alert_type) {
         case AlarmType::AirRaid:
-            printf("[AlarmController] Air raid alert detected!\n");
+            LOGI("AlarmController", "Air raid alert detected!");
             play_alarm(AlarmType::AirRaid, 10);
             break;
 
         case AlarmType::Warning:
-            printf("[AlarmController] Warning alert detected!\n");
+            LOGI("AlarmController", "Warning alert detected!");
             play_alarm(AlarmType::Warning, DEFAULT_DURATION_SEC);
             break;
 
