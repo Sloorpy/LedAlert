@@ -29,8 +29,8 @@ void LEDTransmitter::send_multiple(const LEDProtocol& cmd, const uint16_t amount
     for (uint16_t i = 0; i < amount; ++i)
     {
         static constexpr uint16_t MICRO_IN_MILLI = 1000;
-        usleep(delay * MICRO_IN_MILLI);
         send_raw(timings);
+        usleep(delay * MICRO_IN_MILLI);
     }
 }
 
