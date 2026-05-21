@@ -21,5 +21,6 @@ idf_component_register(
         "led/LedManager.cpp"
         "alerts/AlertsManager.cpp"
         "alarm/AlarmController.cpp"
+        "alarm/ClockController.cpp"
     INCLUDE_DIRS "." "core" "core/exceptions" "libs" "network" "storage" "ir" "portal" "utils" "config" "led" "alerts" "alarm"
 )
